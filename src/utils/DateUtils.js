@@ -1,4 +1,5 @@
 import en from '../locale/translations/en'
+import dayjs from 'dayjs'
 
 const utils = {
   /**
@@ -200,6 +201,7 @@ const utils = {
    * @return {String}
    */
   formatDate (date, format, translation) {
+    return dayjs(date).format(format)
     translation = (!translation) ? en : translation
     let year = this.getFullYear(date)
     let month = this.getMonth(date) + 1

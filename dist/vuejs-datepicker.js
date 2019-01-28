@@ -4,10 +4,12 @@
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.vuejsDatepicker = factory());
-}(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('dayjs')) :
+  typeof define === 'function' && define.amd ? define(['dayjs'], factory) :
+  (global.vuejsDatepicker = factory(global.dayjs));
+}(this, (function (dayjs) { 'use strict';
+
+  dayjs = dayjs && dayjs.hasOwnProperty('default') ? dayjs['default'] : dayjs;
 
   var Language = function Language (language, months, monthsAbbr, days) {
     this.language = language;
@@ -276,6 +278,7 @@
      * @return {String}
      */
     formatDate: function formatDate (date, format, translation) {
+      return dayjs(date).format(format)
       translation = (!translation) ? en : translation;
       var year = this.getFullYear(date);
       var month = this.getMonth(date) + 1;
@@ -443,29 +446,20 @@
         var df = formatstr.split(splitter[0]);
         var ds = datestr.split(splitter[0]);
         var ymd = [0, 0, 0];
-        var dat;
         for (var i = 0; i < df.length; i++) {
-          if (/yyyy/i.test(df[i])) {
+          if (/YYYY/i.test(df[i])) {
             ymd[0] = ds[i];
-          } else if (/mm/i.test(df[i])) {
+          } else if (/MM/i.test(df[i])) {
             ymd[1] = ds[i];
-          } else if (/m/i.test(df[i])) {
-            ymd[1] = ds[i];  
-          } else if (/dd/i.test(df[i])) {
+          } else if (/M/i.test(df[i])) {
+            ymd[1] = ds[i];
+          } else if (/DD/i.test(df[i])) {
             ymd[2] = ds[i];
-          } else if (/d/i.test(df[i])) {
+          } else if (/D/i.test(df[i])) {
             ymd[2] = ds[i];
           }
         }
-
-        var timezone = new Date().toString().split(' ');
-        dat = ymd.join('-') + 'T00:00:00' + timezone[5].substr(3, 5);  //  include timezone to avoid wrong dates after parse
-
-        if (isNaN(Date.parse(dat))) {
-          return datestr
-        }
-
-        return dat
+        return dayjs(ymd.join('-')).toDate()
       }
     },
     mounted: function mounted () {

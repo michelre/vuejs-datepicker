@@ -40,6 +40,7 @@
 </template>
 <script>
 import { makeDateUtils } from '../utils/DateUtils'
+import dayjs from 'dayjs'
 export default {
   props: {
     selectedDate: Date,
@@ -157,29 +158,20 @@ export default {
       var df = formatstr.split(splitter[0])
       var ds = datestr.split(splitter[0])
       var ymd = [0, 0, 0]
-      var dat
       for (var i = 0; i < df.length; i++) {
-        if (/yyyy/i.test(df[i])) {
+        if (/YYYY/i.test(df[i])) {
           ymd[0] = ds[i]
-        } else if (/mm/i.test(df[i])) {
+        } else if (/MM/i.test(df[i])) {
           ymd[1] = ds[i]
-        } else if (/m/i.test(df[i])) {
-          ymd[1] = ds[i]  
-        } else if (/dd/i.test(df[i])) {
+        } else if (/M/i.test(df[i])) {
+          ymd[1] = ds[i]
+        } else if (/DD/i.test(df[i])) {
           ymd[2] = ds[i]
-        } else if (/d/i.test(df[i])) {
+        } else if (/D/i.test(df[i])) {
           ymd[2] = ds[i]
         }
       }
-
-      var timezone = new Date().toString().split(' ')
-      dat = ymd.join('-') + 'T00:00:00' + timezone[5].substr(3, 5)  //  include timezone to avoid wrong dates after parse
-
-      if (isNaN(Date.parse(dat))) {
-        return datestr
-      }
-
-      return dat
+      return dayjs(ymd.join('-')).toDate()
     }
   },
   mounted () {
